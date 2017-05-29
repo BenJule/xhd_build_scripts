@@ -1,0 +1,16 @@
+#!/bin/bash
+# Path to root of CM project directory
+CM_PROJECT_DIR=~/workspace/XenonHD
+ANDROID_DEVICE=lt01wifi
+
+cd "$CM_PROJECT_DIR"
+
+if [ -e "../../patches/build.name.cm14.diff" ]; then
+  patch -R -p1 --no-backup-if-mismatch < ../../patches/build.name.cm14.diff
+fi
+
+source build/envsetup.sh
+#breakfast "$ANDROID_DEVICE"
+
+repo sync --no-clone-bundle
+#repo sync --force-sync --no-clone-bundle -c

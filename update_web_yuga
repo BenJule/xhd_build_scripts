@@ -1,0 +1,44 @@
+#!/bin/bash
+## Root of CM project directory
+PROJECT_DIR=~/workspace/XenonHD
+## Changelog location
+CHANGE_FILE=~/workspace/XenonHD/changelog-cm14.html
+## Device name
+ANDROID_DEVICE=yuga
+## Mega Dir
+MEGA_DIR=/Root/builds
+## End Edit
+OUTDIR=$PROJECT_DIR/out/target/product/$ANDROID_DEVICE
+RECOVERY=recovery.img
+## Find file name of ROM and set variable
+cd "$OUTDIR" || exit
+FILE=$(ls XenonHD-*-*-yuga.zip)
+
+## Check if ROM exists before proceding
+if [ ! -e "$FILE" ]; then
+  echo "Build not detected"
+  exit
+fi
+
+# Mega Upload
+echo "Send ${file} to Mega.NZ"
+megaput --reload --path /Root/yuga/th-s3root-builds "$OUTDIR"/"$FILE" --config ~/.megarc_"$ANDROID_DEVICE"
+echo ""
+
+echo "Send ${RECOVERY} to Mega.NZ"
+megaput --reload --path /Root/yuga/th-s3root-twrp "$OUTDIR"/"$RECOVERY" --config ~/.megarc_"$ANDROID_DEVICE"
+echo ""
+
+cd "$PROJECT_DIR" || exit
+
+# Publish ROM to TeamHorizon FTP
+./xenonhd-"$ANDROID_DEVICE"-upload.sh
+
+# Publish Build on Twitter
+echo "Publish Build on Twitter"
+echo "#$ANDROID_DEVICE" XenonHD Official Build "$timestamp" out now - BLJ. | twidge update
+echo ""
+
+echo ""
+echo "Done."
+echo ""
